@@ -2,6 +2,7 @@ import Base
 import ./glyph.bend as G
 import ./font.bend as F
 import ./render.bend as R
+import ./main.bend as M
 
 # Project invariants and laws for `glyph`.
 # Add `law` declarations here as types and core functions are implemented,
@@ -64,3 +65,41 @@ law render_non_empty_lines_length:
 # Rendering a 2-character string produces lines of width 2 * glyph_width() + 1 = 11n.
 law render_two_char_line_width:
   {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 11n)), R.render_lines("HI")) == True{} : Bool}
+
+# Full A-Z alphabet renders with `glyph_height()` lines, each of width 26 * 5 + 25 = 155n.
+law render_alphabet_height:
+  {List.length(&2, String, R.render_lines("ABCDEFGHIJKLMNOPQRSTUVWXYZ")) == glyph_height() : Nat}
+
+law render_alphabet_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 155n)), R.render_lines("ABCDEFGHIJKLMNOPQRSTUVWXYZ")) == True{} : Bool}
+
+# Lowercase input renders identically to uppercase input.
+law render_lowercase_matches_upper:
+  {R.render_text("hello") == R.render_text("HELLO") : String}
+
+# Spaces and multi-word strings preserve fixed-width alignment across every line.
+law render_space_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 17n)), R.render_lines("A B")) == True{} : Bool}
+
+law render_multi_word_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 65n)), R.render_lines("HELLO WORLD")) == True{} : Bool}
+
+# Unknown/punctuation characters render via the '?' fallback glyph with fixed width.
+law render_unknown_punctuation:
+  {R.render_text("HI!") == R.render_text("HI?") : String}
+
+law render_unknown_punctuation_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 17n)), R.render_lines("HI!")) == True{} : Bool}
+
+# CLI argument helpers handle empty, script-only, and multi-word inputs cleanly.
+law cli_user_args_empty:
+  {M.cli_user_args(Nil{}) == Nil{} : List<String>}
+
+law cli_user_args_script_only:
+  {M.cli_user_args(["main.bend"]) == Nil{} : List<String>}
+
+law cli_user_args_strips_program:
+  {M.cli_user_args(["main.bend", "hello", "world"]) == ["hello", "world"] : List<String>}
+
+law cli_format_input_multi_word:
+  {M.format_input(["hello", "world"]) == "HELLO WORLD" : String}

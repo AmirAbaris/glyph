@@ -2,6 +2,7 @@ import Base
 import ./glyph.bend as G
 import ./font.bend as F
 import ./render.bend as R
+import ./main.bend as M
 import ./LAWS.bend as LAWS
 
 # Run `bend PROOF.bend` or `bend PROOF.bend --verdict` before committing.
@@ -53,6 +54,39 @@ def LAWS.render_non_empty_lines_length(c, rest):
       {==}
 
 def LAWS.render_two_char_line_width():
+  {==}
+
+def LAWS.render_alphabet_height():
+  {==}
+
+def LAWS.render_alphabet_width():
+  {==}
+
+def LAWS.render_lowercase_matches_upper():
+  {==}
+
+def LAWS.render_space_width():
+  {==}
+
+def LAWS.render_multi_word_width():
+  {==}
+
+def LAWS.render_unknown_punctuation():
+  {==}
+
+def LAWS.render_unknown_punctuation_width():
+  {==}
+
+def LAWS.cli_user_args_empty():
+  {==}
+
+def LAWS.cli_user_args_script_only():
+  {==}
+
+def LAWS.cli_user_args_strips_program():
+  {==}
+
+def LAWS.cli_format_input_multi_word():
   {==}
 
 def main() -> IO(Unit):
