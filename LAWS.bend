@@ -1,5 +1,6 @@
 import Base
 import ./glyph.bend as G
+import ./font.bend as F
 
 # Project invariants and laws for `glyph`.
 # Add `law` declarations here as types and core functions are implemented,
@@ -19,3 +20,24 @@ law glyph_rows_length:
 # Every row in `Glyph.blank()` has width `glyph_width()`.
 law glyph_blank_width:
   {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), glyph_width())), G.Glyph.rows(G.Glyph.blank())) == True{} : Bool}
+
+# Every Glyph returned by `font_lookup` has `glyph_height()` rows.
+law font_lookup_rows_length:
+  for c: Char
+  {List.length(&2, String, G.Glyph.rows(F.font_lookup(c))) == glyph_height() : Nat}
+
+# Every row in `font_unknown()` has width `glyph_width()`.
+law font_unknown_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), glyph_width())), G.Glyph.rows(F.font_unknown())) == True{} : Bool}
+
+# Space maps to `Glyph.blank()`.
+law font_lookup_space:
+  {F.font_lookup(' ') == G.Glyph.blank() : G.Glyph}
+
+# Lowercase letters normalize to their uppercase glyphs.
+law font_lookup_lowercase:
+  {F.font_lookup('a') == F.font_lookup('A') : G.Glyph}
+
+# Every row in `font_lookup` for space, A-Z, a-z, and sample unknown characters has width `glyph_width()`.
+law font_lookup_width:
+  {List.all(~&2, ~Char, ~(c => List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), glyph_width())), G.Glyph.rows(F.font_lookup(c)))), [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '?', '0', '!']) == True{} : Bool}
