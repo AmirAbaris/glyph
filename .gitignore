@@ -1,0 +1,6 @@
+# Compiled Bend outputs
+*.c
+*.js
+*.mjs
+*.out
+main
