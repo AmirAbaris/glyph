@@ -1,6 +1,7 @@
 import Base
 import ./glyph.bend as G
 import ./font.bend as F
+import ./render.bend as R
 
 # Project invariants and laws for `glyph`.
 # Add `law` declarations here as types and core functions are implemented,
@@ -41,3 +42,25 @@ law font_lookup_lowercase:
 # Every row in `font_lookup` for space, A-Z, a-z, and sample unknown characters has width `glyph_width()`.
 law font_lookup_width:
   {List.all(~&2, ~Char, ~(c => List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), glyph_width())), G.Glyph.rows(F.font_lookup(c)))), [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '?', '0', '!']) == True{} : Bool}
+
+# Empty input renders to an empty list of lines and an empty String.
+law render_empty_lines:
+  {R.render_lines("") == Nil{} : List<&2, String>}
+
+law render_empty_text:
+  {R.render_text("") == "" : String}
+
+# Converting any String to Glyphs preserves its length.
+law string_to_glyphs_length:
+  for s: String
+  {List.length(&2, G.Glyph, R.string_to_glyphs(s)) == String.length(s) : Nat}
+
+# Rendering any non-empty String produces exactly `glyph_height()` lines.
+law render_non_empty_lines_length:
+  for c: Char
+  for rest: String
+  {List.length(&2, String, R.render_lines(SCon{c, rest})) == glyph_height() : Nat}
+
+# Rendering a 2-character string produces lines of width 2 * glyph_width() + 1 = 11n.
+law render_two_char_line_width:
+  {List.all(~&2, ~String, ~(r => Nat.is_eq(String.length(r), 11n)), R.render_lines("HI")) == True{} : Bool}
